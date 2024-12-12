@@ -9,10 +9,11 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons"; // İkonlar için Ionicons kullanacağız
+import { Ionicons } from "@expo/vector-icons";
 
 const NotesScreen = ({ navigation }) => {
   const [title, setTitle] = useState("");
@@ -28,8 +29,8 @@ const NotesScreen = ({ navigation }) => {
       quality: 1,
     });
 
-    if (!result.canceled) {
-      setImage(result.uri);
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setImage(result.assets[0].uri);
     }
   };
 
@@ -45,6 +46,25 @@ const NotesScreen = ({ navigation }) => {
     setTitle("");
     setDetail("");
     setImage(null);
+  };
+
+  const deleteNote = (id) => {
+    Alert.alert(
+      "Silmek İstediğinizden Emin Misiniz?",
+      "Bu notu silmek istediğinizden emin misiniz?",
+      [
+        {
+          text: "Hayır",
+          style: "cancel",
+        },
+        {
+          text: "Evet",
+          onPress: () => {
+            setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -67,7 +87,6 @@ const NotesScreen = ({ navigation }) => {
             onChangeText={setDetail}
             multiline
           />
-          {/* Butonları içerisine ikon ekledik */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={pickImage}>
               <Ionicons name="image-outline" size={24} color="#fff" />
@@ -86,14 +105,28 @@ const NotesScreen = ({ navigation }) => {
           data={notes}
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => (
-            <TouchableOpacity
-              style={styles.noteItem}
-              onPress={() => navigation.navigate("Detail", { note: item })}
-            >
-              <Text style={styles.noteText}>
-                {index + 1}. {item.title}
-              </Text>
-            </TouchableOpacity>
+            <View style={styles.noteItem}>
+              <TouchableOpacity
+                style={styles.noteContent}
+                onPress={() => navigation.navigate("Detail", { note: item })}
+              >
+                <Text style={styles.noteText}>
+                  {index + 1}. {item.title}
+                </Text>
+                {item.image && (
+                  <Image source={{ uri: item.image }} style={styles.previewImage} />
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.deleteButton,
+                  item.image && styles.deleteButtonWithImage,
+                ]}
+                onPress={() => deleteNote(item.id)}
+              >
+                <Ionicons name="trash-outline" size={24} color="#fff" />
+              </TouchableOpacity>
+            </View>
           )}
         />
       </KeyboardAvoidingView>
@@ -150,6 +183,8 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   noteItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     padding: 15,
     backgroundColor: "#fff",
     marginVertical: 8,
@@ -161,9 +196,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
   },
+  noteContent: {
+    flex: 1,
+  },
   noteText: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
+  },
+  deleteButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#e74c3c",
+    borderRadius: 8,
+    padding: 6, // Küçültüldü
+    marginLeft: 10,
+    height: 40, // Sabit yükseklik
+    width: 40,  // Sabit genişlik
+  },
+  deleteButtonWithImage: {
+    padding: 4, // Daha kompakt bir buton
   },
 });

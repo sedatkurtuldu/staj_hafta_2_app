@@ -1,7 +1,7 @@
 {
   "name": "staj_hafta_2_app",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.jsx",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",

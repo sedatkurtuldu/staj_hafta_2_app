@@ -21,7 +21,12 @@ const NotesStack = () => (
     <Stack.Screen
       name="Detail"
       component={DetailScreen}
-      options={{ headerShown: true }}
+      options={{
+        headerShown: true,
+        headerTitle: 'Detay',
+        headerTitleAlign: 'center',
+        headerShadowVisible: false
+      }}
     />
   </Stack.Navigator>
 );
