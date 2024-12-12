@@ -209,12 +209,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#e74c3c",
     borderRadius: 8,
-    padding: 6, // Küçültüldü
+    padding: 6,
     marginLeft: 10,
-    height: 40, // Sabit yükseklik
-    width: 40,  // Sabit genişlik
+    height: 40,
+    width: 40,
   },
   deleteButtonWithImage: {
-    padding: 4, // Daha kompakt bir buton
+    padding: 4,
   },
 });
